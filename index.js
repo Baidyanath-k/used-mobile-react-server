@@ -16,15 +16,18 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const samsungCollection = client.db('usedMobile').collection('samsung');
-
-
+        const symphonyCollection = client.db('usedMobile').collection('symphony');
 
         app.get('/samsungcollection', async (req, res) => {
             const query = {};
             const options = await samsungCollection.find(query).toArray();
             res.send(options)
         })
-
+        app.get('/symphonycollection', async (req, res) => {
+            const query = {};
+            const options = await symphonyCollection.find(query).toArray();
+            res.send(options)
+        })
 
         app.get('/samsungcollection/:id', async (req, res) => {
             const id = req.params.id;
@@ -33,6 +36,12 @@ async function run() {
             res.send(service);
         })
 
+        app.get('/symphonycollection/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const service = await symphonyCollection.findOne(query);
+            res.send(service);
+        })
 
     }
     finally { }
