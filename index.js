@@ -109,12 +109,18 @@ async function run() {
         })
 
 
-        
+
         app.post('/buys', async (req, res) => {
             const buys = req.body;
             const result = await buysCollection.insertOne(buys);
             res.send(result);
         })
+
+        app.get('/buys', async (req, res) => {
+            const query = {};
+            const buys = await buysCollection.find(query).toArray();
+            res.send(buys)
+        });
 
     }
     finally { }
