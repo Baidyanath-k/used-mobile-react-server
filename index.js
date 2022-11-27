@@ -19,6 +19,7 @@ async function run() {
         const symphonyCollection = client.db('usedMobile').collection('symphony');
         const waltonCollection = client.db('usedMobile').collection('walton');
         const usersCollection = client.db('usedMobile').collection('users');
+        const buysCollection = client.db('usedMobile').collection('buys');
 
         app.get('/samsungcollection', async (req, res) => {
             const query = {};
@@ -71,6 +72,49 @@ async function run() {
             const users = await usersCollection.find(query).toArray();
             res.send(users)
         });
+
+
+        app.put('/users/admin/:id', async (req, res) => {
+
+            // //start: verify jwt
+            // const decodedEmail = req.decoded.email;
+            // const query = { email: decodedEmail }
+            // const user = await usersCollection.findOne(query);
+            // if (user?.role !== 'admin') {
+            //     return res.status(403).send({ message: 'forbidden access' })
+            // }
+            // //end: verify jwt
+
+
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true }
+            const updatedDoc = {
+                $set: {
+                    role: 'admin'
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        // admin check
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email }
+            const user = await usersCollection.findOne(filter)
+            res.send({ isAdmin: user?.role === 'admin' })
+        })
+
+
+        
+        app.post('/buys', async (req, res) => {
+            const buys = req.body;
+            const result = await buysCollection.insertOne(buys);
+            res.send(result);
+        })
 
     }
     finally { }
