@@ -18,6 +18,7 @@ async function run() {
         const samsungCollection = client.db('usedMobile').collection('samsung');
         const symphonyCollection = client.db('usedMobile').collection('symphony');
         const waltonCollection = client.db('usedMobile').collection('walton');
+        const usersCollection = client.db('usedMobile').collection('users');
 
         app.get('/samsungcollection', async (req, res) => {
             const query = {};
@@ -55,6 +56,14 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const service = await waltonCollection.findOne(query);
             res.send(service);
+        })
+
+
+
+        app.post('/users', async (req, res) => {
+            const users = req.body;
+            const result = await usersCollection.insertOne(users);
+            res.send(result);
         })
 
     }
